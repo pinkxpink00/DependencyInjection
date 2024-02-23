@@ -2,21 +2,48 @@
 {
     static void Main(string[] args)
     {
-        var logger = new Logger();
-        logger.Log("Hello");
+        var logger = new Logger(new SimpleLogService());
+        logger.Log("Hello METANIT.COM");
+
+        logger = new Logger(new GreenLogService());
+        logger.Log("Hello METANIT.COM");
     }
 }
-
-class SimpleLogService
+//ILOG Interface about abstract
+interface ILogService
 {
-    public void Write(string message)
+    void Message(string message);
+}
+
+//SimpleMessageOnConsole
+class SimpleLogService : ILogService
+{
+    public void Message(string message)
     {
         Console.WriteLine(message);
     }
 }
-
+//LogService Which Text Message on Green Color
+class GreenLogService : ILogService
+{
+    public void Message(string message)
+    {
+        var defaultColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine(message);
+        Console.ForegroundColor = defaultColor;
+    }
+}
 class Logger
 {
-    SimpleLogService simpleLogService = new SimpleLogService();
-    public void Log(string message) => simpleLogService.Write($"{DateTime.Now}-{message}");
+    ILogService logService;
+    public Logger(ILogService logService)
+    {
+        this.logService = logService;
+    }
+
+    public void Log(string message)
+    {
+        logService.Message($"{DateTime.Now}-----{message}");
+    }
 }
